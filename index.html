@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>استبيان رعاية الموهوبات</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Naskh+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a single scanning column of linked panels; the "talent sunflower" (one seed per family) is the centrepiece, every panel reacts to the grade filter. */
+:root{
+  --bg:#F2F4F3; --surface:#FFFFFF; --sunk:#E9EFED; --ink:#12302F; --muted:#5A6E6B; --line:#D8E2DF;
+  --teal:#0B5D57; --teal2:#8CC3BB; --gold:#9A7428; --gold-soft:#F1EADB;
+  --neu:#B5C0BD; --rose2:#E8A08E; --rose:#BF432B;
+  --f-display:"Sakkal Majalla","Noto Naskh Arabic","Traditional Arabic",serif;
+  --f-body:"Sakkal Majalla","Noto Naskh Arabic","Traditional Arabic",serif;
+  --r:6px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0C1919; --surface:#132425; --sunk:#0F1F20; --ink:#E5EEEB; --muted:#93A7A3; --line:#233839;
+  --teal:#3DB2A4; --teal2:#1E6E67; --gold:#E7B44A; --gold-soft:#3A2F17;
+  --neu:#5E6E6B; --rose2:#9A5A4C; --rose:#EF7B5F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0C1919; --surface:#132425; --sunk:#0F1F20; --ink:#E5EEEB; --muted:#93A7A3; --line:#233839;
+  --teal:#3DB2A4; --teal2:#1E6E67; --gold:#E7B44A; --gold-soft:#3A2F17;
+  --neu:#5E6E6B; --rose2:#9A5A4C; --rose:#EF7B5F; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:19px;line-height:1.55;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-inline:20px;padding-block:28px 60px;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;margin:0;text-wrap:balance}
+.num{font-variant-numeric:tabular-nums}
+svg{direction:ltr;display:block;max-width:100%}
+svg text{font-family:var(--f-body);fill:var(--muted)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* header */
+header{display:grid;grid-template-columns:1fr auto;gap:16px 24px;align-items:end;border-bottom:3px double var(--teal);padding-bottom:16px}
+.org{font-size:15px;color:var(--muted);line-height:1.5}
+.org b{color:var(--ink);font-weight:700}
+.eyebrow{font-size:13px;color:var(--muted);letter-spacing:.02em;display:flex;gap:10px;flex-wrap:wrap}
+.eyebrow b{color:var(--gold);font-weight:600}
+h1{font-size:clamp(28px,4vw,40px);line-height:1.3;margin-top:8px;font-weight:700}
+h1 span{color:var(--teal)}
+.eyebrow{font-size:15px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-end}
+.seg{display:flex;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:3px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:4px 14px;border-radius:4px;cursor:pointer;font-size:17px;color:var(--muted);white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
+.seg button .c{font-size:12px;opacity:.7;margin-inline-start:4px}
+.toggle{display:flex;align-items:center;gap:8px;font-size:16px;color:var(--muted);cursor:pointer;user-select:none}
+.toggle input{accent-color:var(--teal);width:16px;height:16px}
+
+/* panels */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;min-width:0}
+.ph{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.ph h2{font-size:22px;font-weight:700;color:var(--teal)}
+.ph p{margin:0;font-size:15px;color:var(--muted)}
+.ph{border-bottom:1px solid var(--line);padding-bottom:8px}
+.grid{display:grid;gap:20px}
+.g-main{grid-template-columns:minmax(0,1.55fr) minmax(0,1fr)}
+.g-flower{grid-template-columns:minmax(0,1.5fr) minmax(0,1fr)}
+@media (max-width:900px){.g-main,.g-flower,header{grid-template-columns:1fr}.controls{justify-content:flex-start}}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:1.3fr repeat(4,1fr);gap:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.kpi{padding:18px 20px;border-inline-start:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi:first-child{border-inline-start:0;flex-direction:row;align-items:center;gap:16px;background:var(--sunk)}
+.kpi .lab{font-size:16px;font-weight:600;color:var(--muted)}
+.kpi .val{font-family:var(--f-display);font-size:36px;font-weight:700;line-height:1.1}
+.kpi .sub{font-size:14px;color:var(--muted)}
+.kpi .val small{font-size:16px;color:var(--muted);font-weight:500}
+.gauge{width:112px;flex:none}
+@media (max-width:900px){.kpis{grid-template-columns:repeat(2,1fr)}.kpi:first-child{grid-column:1/-1}.kpi:nth-child(2),.kpi:nth-child(4){border-inline-start:0}.kpi{border-top:1px solid var(--line)}.kpi:first-child{border-top:0}}
+
+/* likert */
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:15px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-inline-end:5px;vertical-align:-1px}
+.lk{display:flex;flex-direction:column;gap:6px}
+.lrow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr) 46px;gap:12px;align-items:center;padding:7px 8px;border-radius:10px;cursor:pointer;border:1px solid transparent;background:none;text-align:start;width:100%}
+.lrow:hover{background:var(--sunk)}
+.lrow[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-soft)}
+.lq{font-size:17px;line-height:1.4;display:flex;gap:8px;align-items:flex-start;min-width:0}
+.lq .n{font-family:var(--f-display);color:var(--gold);font-weight:700;min-width:16px}
+.bar{display:flex;height:22px;border-radius:6px;overflow:hidden;background:var(--sunk)}
+.bar span{height:100%;transition:width .5s cubic-bezier(.3,.7,.2,1)}
+.lm{font-family:var(--f-display);font-size:19px;font-weight:600;text-align:end}
+.s5{background:var(--teal)}.s4{background:var(--teal2)}.s3{background:var(--neu)}.s2{background:var(--rose2)}.s1{background:var(--rose)}
+@media (max-width:560px){.lrow{grid-template-columns:1fr 46px}.lrow .bar{grid-column:1/-1;grid-row:2}}
+
+/* radar & small charts */
+.radar-box{display:flex;flex-direction:column;align-items:center;gap:8px}
+.radar-keys{display:grid;grid-template-columns:1fr 1fr;gap:4px 14px;font-size:15px;color:var(--muted);width:100%}
+.radar-keys b{color:var(--gold);font-family:var(--f-display);margin-inline-end:4px}
+
+/* flower */
+.flower-wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1100px){.flower-wrap{grid-template-columns:1fr}}
+#flower circle.seed{cursor:pointer;transition:opacity .3s, r .3s}
+#flower circle.seed:hover{stroke:var(--ink);stroke-width:2}
+.mode{font-size:15px;color:var(--muted)}
+.mode select{font:inherit;font-size:16px;background:var(--sunk);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:4px 8px;margin-inline-start:6px}
+.detail{background:var(--sunk);border-radius:6px;padding:14px;font-size:16px;min-height:280px;display:flex;flex-direction:column;gap:8px}
+.detail h3{font-size:20px;font-weight:700}
+.detail .meta{color:var(--muted);font-size:15px}
+.drow{display:grid;grid-template-columns:18px 1fr auto;gap:8px;align-items:center}
+.drow .n{color:var(--gold);font-family:var(--f-display);font-weight:700}
+.chip{font-size:14px;padding:1px 8px;border-radius:4px;white-space:nowrap;color:#fff}
+.chip.c5{background:var(--teal)}.chip.c4{background:var(--teal2);color:var(--ink)}.chip.c3{background:var(--neu);color:var(--ink)}.chip.c2{background:var(--rose2);color:var(--ink)}.chip.c1{background:var(--rose)}
+.empty{color:var(--muted);margin:auto;text-align:center;max-width:22ch}
+
+/* grades */
+.grades{display:flex;flex-direction:column;gap:10px}
+.grow{display:grid;grid-template-columns:120px 1fr 54px;gap:10px;align-items:center;font-size:17px;cursor:pointer;background:none;border:0;padding:4px 0;text-align:start;width:100%}
+.grow .track{height:14px;background:var(--sunk);border-radius:3px;overflow:hidden;position:relative}
+.grow .fill{position:absolute;inset-block:0;inset-inline-start:0;background:var(--teal);border-radius:3px;transition:width .5s}
+.grow[aria-pressed="true"] .fill{background:var(--gold)}
+.grow .v{font-family:var(--f-display);font-weight:600;text-align:end}
+.grow .k{color:var(--muted);font-size:14px}
+
+/* insights */
+.ins{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.in{padding:16px;border-radius:6px;background:var(--sunk);border-inline-start:4px solid var(--teal);display:flex;gap:12px;align-items:flex-start}
+.in .dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:7px}
+.in p{margin:0;font-size:17px}
+.in strong{font-family:var(--f-display);font-weight:700}
+
+/* table */
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.tools input{font:inherit;font-size:16px;padding:5px 12px;border-radius:6px;border:1px solid var(--line);background:var(--sunk);color:var(--ink);width:220px;max-width:100%}
+.tscroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:16px;min-width:720px}
+th{font-weight:700;color:var(--ink);background:var(--sunk);font-size:15px;text-align:start;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th.sortable{cursor:pointer}
+th.q{text-align:center;color:var(--gold);font-family:var(--f-display)}
+td{padding:5px 8px;border-bottom:1px solid var(--line)}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--sunk)}
+tbody tr.sel td{background:var(--gold-soft)}
+td.cell{text-align:center}
+td.cell i{display:inline-block;width:18px;height:18px;border-radius:5px}
+td.m{font-family:var(--f-display);font-weight:600}
+.muted{color:var(--muted)}
+.foot{font-size:15px;color:var(--muted);text-align:center}
+
+.stats{min-width:980px}
+.stats th{text-align:center;border:1px solid var(--line)}
+.stats th.sm{font-size:13px;padding:4px}
+.stats td{border:1px solid var(--line);padding:6px 6px}
+.stats td.c,.stats th.c{text-align:center}
+.stats .qtxt{min-width:200px;line-height:1.45}
+.stats .b{font-weight:700}
+.stats tfoot td{background:var(--sunk)}
+.stats tr.sel td{background:var(--gold-soft)}
+.deg{display:inline-block;padding:0 10px;border-radius:4px;background:var(--teal);color:#fff;font-size:15px;white-space:nowrap}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:15px;font-family:var(--f-body);padding:7px 10px;border-radius:8px;opacity:0;transition:opacity .12s;z-index:20;max-width:260px;line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+
+<div class="wrap" dir="rtl" lang="ar">
+  <header>
+    <div>
+      <div class="org">برنامج رعاية الموهوبات · <b>المرحلة المتوسطة</b></div>
+      <h1>تقرير نتائج استبيان رضا أولياء الأمور<br><span>عن رعاية الطالبات الموهوبات</span></h1>
+      <div class="eyebrow"><span>تاريخ التطبيق:</span><b id="hdate">3 أكتوبر 2026</b></div>
+    </div>
+    <div class="controls">
+      <span class="toggle" style="cursor:default">تصفية حسب الصف:</span><div class="seg" id="gradeSeg" role="group" aria-label="تصفية حسب الصف"></div>
+      
+    </div>
+  </header>
+
+  <section class="kpis" id="kpis"></section>
+
+  <div class="grid g-main">
+    <section class="panel">
+      <div class="ph">
+        <h2>توزيع الاستجابات على عبارات الاستبيان</h2>
+        <div class="legend">
+          <span><i class="s5"></i>أوافق بشدة</span><span><i class="s4"></i>أوافق</span><span><i class="s3"></i>محايد</span><span><i class="s2"></i>لا أوافق</span><span><i class="s1"></i>لا أوافق بشدة</span>
+        </div>
+      </div>
+      <div class="lk" id="likert"></div>
+      <p class="foot" style="text-align:start;margin:10px 0 0">يمكن تحديد أي عبارة لإبرازها في مخطط المتوسطات والجدول الإحصائي.</p>
+    </section>
+    <section class="panel">
+      <div class="ph"><h2>متوسطات العبارات</h2><p>من خمس درجات</p></div>
+      <div class="radar-box">
+        <svg id="radar" viewBox="0 0 360 340" width="360" aria-label="مخطط رادار لمتوسطات العبارات"></svg>
+        <div class="radar-keys" id="radarKeys"></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="ph"><h2>الجدول الإحصائي لعبارات الاستبيان</h2><p>التكرارات والنسب المئوية والمتوسطات الحسابية والانحرافات المعيارية</p></div>
+    <div class="tscroll"><table id="stats" class="stats"></table></div>
+    <p class="foot" style="text-align:start;margin:10px 0 0">درجة الموافقة: 1.00–1.80 منخفضة جداً · 1.81–2.60 منخفضة · 2.61–3.40 متوسطة · 3.41–4.20 مرتفعة · 4.21–5.00 مرتفعة جداً</p>
+  </section>
+
+  <div class="grid g-flower">
+      <section class="panel">
+        <div class="ph"><h2>المقارنة بين الصفوف الدراسية</h2><p>حدد الصف للتصفية</p></div>
+        <div class="grades" id="grades"></div>
+      </section>
+      <section class="panel">
+        <div class="ph"><h2>التوزيع الزمني للاستجابات</h2><p id="tlSub">الردود كل نصف ساعة</p></div>
+        <svg id="timeline" viewBox="0 0 440 190"></svg>
+      </section>
+  </div>
+
+  <section class="panel">
+    <div class="ph"><h2>أبرز النتائج</h2><p>تُحدَّث وفق التصفية المختارة</p></div>
+    <div class="ins" id="insights"></div>
+  </section>
+
+  <section class="panel">
+    <div class="ph">
+      <h2>البيانات التفصيلية للاستجابات</h2>
+      <div class="tools"><input id="search" type="search" placeholder="البحث برقم الاستجابة" aria-label="بحث"></div>
+    </div>
+    <div class="tscroll"><table id="tbl"></table></div>
+  </section>
+
+  <p class="foot">مقياس ليكرت الخماسي: أوافق بشدة = 5 · أوافق = 4 · محايد = 3 · لا أوافق = 2 · لا أوافق بشدة = 1 — مؤشر الرضا = المتوسط ÷ 5</p>
+</div>
+<div id="tip"></div>
+
+<script>
+const RAW = [["17:28", "", 0, "55555555"], ["17:29", "", 0, "55555555"], ["17:30", "", 0, "55555555"], ["17:32", "", 0, "55555555"], ["17:34", "", 0, "54554555"], ["17:35", "", 0, "55555555"], ["17:36", "", 0, "55555555"], ["17:44", "", 0, "55555555"], ["18:18", "", 3, "55545545"], ["18:22", "", 1, "44444443"], ["18:22", "", 1, "55555555"], ["18:22", "", 2, "55555555"], ["18:23", "", 3, "55555555"], ["18:23", "", 3, "55555555"], ["18:24", "", 3, "55555555"], ["18:24", "", 1, "55555555"], ["18:25", "", 1, "44334444"], ["18:25", "", 1, "55555555"], ["18:26", "", 3, "55555555"], ["18:27", "", 3, "55555515"], ["18:27", "", 3, "45545444"], ["18:28", "", 1, "55555555"], ["18:30", "", 3, "55555555"], ["18:32", "", 2, "55555555"], ["18:37", "", 2, "55555555"], ["18:39", "", 2, "45444544"], ["18:40", "", 2, "55555555"], ["18:43", "", 3, "55555555"], ["18:45", "", 2, "55555555"], ["18:49", "", 1, "55555555"], ["18:53", "", 1, "55555555"], ["19:15", "", 3, "55555555"], ["19:38", "", 3, "55455554"], ["19:47", "", 1, "55444445"], ["19:58", "", 3, "44525445"], ["20:14", "", 2, "55555555"], ["20:15", "", 2, "55555555"], ["20:15", "", 3, "55555555"], ["20:17", "", 3, "55555555"], ["20:18", "", 3, "55555555"], ["20:52", "", 3, "44555555"], ["21:01", "", 1, "55555555"], ["21:02", "", 2, "55555555"], ["21:04", "", 2, "54545555"], ["21:06", "", 2, "55555555"], ["21:20", "", 1, "55555555"], ["21:25", "", 3, "55555555"], ["21:37", "", 3, "55544445"], ["22:20", "", 1, "55555555"], ["23:22", "", 2, "44444444"]];
+const Q = [
+  ["الدعم والتشجيع المستمر","تقدم المدرسة الدعم والتشجيع المستمر للطالبات الموهوبات."],
+  ["اكتشاف الموهوبات وقدراتهن","أرى أن المدرسة تهتم باكتشاف الطالبات الموهوبات والتعرف على قدراتهن."],
+  ["برامج وأنشطة لتنمية المواهب","توفر المدرسة برامج وأنشطة مناسبة لتنمية مواهب الطالبات."],
+  ["تناسب البرامج مع احتياجات ابنتي","تتناسب البرامج المقدمة مع احتياجات وقدرات ابنتي الموهوبة."],
+  ["فرص المسابقات والفعاليات","تتاح للطالبات الموهوبات فرص للمشاركة في المسابقات والفعاليات المختلفة."],
+  ["بيئة محفزة للإبداع والابتكار","توفر المدرسة بيئة تعليمية محفزة للإبداع والابتكار."],
+  ["أثر البرامج على مهارات ابنتي","ألاحظ أثر البرامج المقدمة في تطوير مهارات ابنتي وقدراتها."],
+  ["إطلاع أولياء الأمور على البرامج","يتم إطلاع أولياء الأمور على البرامج والأنشطة الخاصة بالطالبات الموهوبات."]
+];
+const LBL = {5:"أوافق بشدة",4:"أوافق",3:"محايد",2:"لا أوافق",1:"لا أوافق بشدة"};
+const GR = {1:"الأول المتوسط",2:"الثاني المتوسط",3:"الثالث المتوسط",0:"غير محدد"};
+const AR = s => String(s);
+const f1 = v => AR(v.toFixed(2));
+const pct = v => AR(Math.round(v*100)) + "%";
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+const ALL = RAW.map(([t,n,g,a],i)=>{const s=a.split("").map(Number);return {i,t,n:n||"",g,a:s,mean:s.reduce((x,y)=>x+y,0)/s.length}});
+const st = {grade:"all", mode:"mean", hide:false, sel:null, q:"", sort:"t", dir:1};
+try{const s=JSON.parse(localStorage.getItem("gifted-dash")||"{}"); if(s.hide) st.hide=true;}catch(e){}
+
+const rows = () => st.grade==="all" ? ALL : ALL.filter(r=>r.g===st.grade);
+const nameOf = r => "استجابة " + AR(r.i+1);
+const mean = arr => arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0;
+const scoreColor = v => v>=4.75?css("--teal"):v>=4?css("--teal2"):v>=3?css("--neu"):v>=2?css("--rose2"):css("--rose");
+
+/* tooltip */
+const tip = document.getElementById("tip");
+function showTip(e,html){tip.innerHTML=html;tip.style.opacity=1;const x=Math.min(e.clientX+14,innerWidth-270);tip.style.left=Math.max(8,x)+"px";tip.style.top=(e.clientY+14)+"px"}
+function hideTip(){tip.style.opacity=0}
+
+/* hijri date */
+try{document.getElementById("hdate").textContent = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"long",year:"numeric"}).format(new Date(2026,9,3)) + " الموافق 3 أكتوبر 2026م";}catch(e){}
+
+/* grade segment */
+function renderSeg(){
+  const opts=[["all","جميع الصفوف",ALL.length],[1,"الأول المتوسط",0],[2,"الثاني المتوسط",0],[3,"الثالث المتوسط",0],[0,"غير محدد",0]];
+  opts.forEach(o=>{if(o[0]!=="all") o[2]=ALL.filter(r=>r.g===o[0]).length});
+  const el=document.getElementById("gradeSeg");
+  el.innerHTML=opts.map(o=>`<button data-g="${o[0]}" aria-pressed="${String(st.grade)===String(o[0])}">${o[1]}<span class="c num">(${AR(o[2])})</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>{st.grade=b.dataset.g==="all"?"all":+b.dataset.g;st.sel=null;render()});
+}
+
+/* KPIs */
+function renderKPIs(){
+  const R=rows(), ans=R.flatMap(r=>r.a), m=mean(ans), idx=m/5;
+  const agree=ans.filter(v=>v>=4).length/ans.length||0;
+  const strong=ans.filter(v=>v===5).length/ans.length||0;
+  const full=R.filter(r=>r.a.every(v=>v===5)).length;
+  const res=ans.filter(v=>v<=3).length;
+  const A=Math.PI, r=46, cx=56, cy=56;
+  const arc=(p)=>{const a=A+A*p;return `M ${cx-r} ${cy} A ${r} ${r} 0 0 1 ${cx+r*Math.cos(a)} ${cy+r*Math.sin(a)}`};
+  document.getElementById("kpis").innerHTML=`
+    <div class="kpi">
+      <svg class="gauge" viewBox="0 0 112 66"><path d="${arc(1)}" fill="none" stroke="${css("--line")}" stroke-width="10" stroke-linecap="round"/>
+      <path d="${arc(Math.max(.001,idx))}" fill="none" stroke="${css("--gold")}" stroke-width="10" stroke-linecap="round"/>
+      <text x="56" y="56" text-anchor="middle" style="font-family:var(--f-display);font-size:24px;font-weight:700;fill:var(--ink)">${pct(idx)}</text></svg>
+      <div><div class="lab">مؤشر الرضا العام</div><div class="val num">${f1(m)}<small> / 5</small></div><div class="sub">بناءً على ${AR(ans.length)} استجابة</div></div>
+    </div>
+    <div class="kpi"><span class="lab">عدد المستجيبين</span><span class="val num">${AR(R.length)}</span><span class="sub">من أولياء الأمور</span></div>
+    <div class="kpi"><span class="lab">نسبة الموافقة</span><span class="val num">${pct(agree)}</span><span class="sub">منها ${pct(strong)} «أوافق بشدة»</span></div>
+    <div class="kpi"><span class="lab">الرضا التام</span><span class="val num">${AR(full)}</span><span class="sub">اختاروا «أوافق بشدة» في جميع العبارات</span></div>
+    <div class="kpi"><span class="lab">استجابات التحفظ</span><span class="val num" style="color:${res?css("--rose"):"inherit"}">${AR(res)}</span><span class="sub">محايد أو غير موافق</span></div>`;
+}
+
+/* Likert */
+function qStats(R){return Q.map((q,k)=>{const v=R.map(r=>r.a[k]);const c={1:0,2:0,3:0,4:0,5:0};v.forEach(x=>c[x]++);return {k,c,n:v.length,m:mean(v)}})}
+function renderLikert(){
+  const S=qStats(rows());
+  const el=document.getElementById("likert");
+  el.innerHTML=S.map(s=>`<button class="lrow" data-k="${s.k}" aria-pressed="${st.mode===s.k}">
+    <span class="lq"><span class="n">${AR(s.k+1)}</span><span>${Q[s.k][0]}</span></span>
+    <span class="bar">${[5,4,3,2,1].map(v=>s.c[v]?`<span class="s${v}" data-v="${v}" data-c="${s.c[v]}" style="width:${s.c[v]/s.n*100}%"></span>`:"").join("")}</span>
+    <span class="lm num">${f1(s.m)}</span></button>`).join("");
+  el.querySelectorAll(".lrow").forEach(b=>{
+    b.onclick=()=>{const k=+b.dataset.k;st.mode=st.mode===k?"mean":k;render()};
+    b.querySelectorAll(".bar span").forEach(sp=>{
+      sp.onmousemove=e=>{const s=S[+b.dataset.k];showTip(e,`<b>${LBL[sp.dataset.v]}</b><br>${AR(sp.dataset.c)} من ${AR(s.n)} (${pct(sp.dataset.c/s.n)})`)};
+      sp.onmouseleave=hideTip;
+    });
+  });
+}
+
+/* Radar */
+function renderRadar(){
+  const svg=document.getElementById("radar");
+  const cx=180,cy=165,R=120,n=8, lo=3, hi=5;
+  const ang=k=>-Math.PI/2+k*2*Math.PI/n;
+  const pt=(k,v)=>{const r=Math.max(0,(v-lo)/(hi-lo))*R;return [cx+r*Math.cos(ang(k)),cy+r*Math.sin(ang(k))]};
+  const all=qStats(ALL), cur=qStats(rows());
+  let h="";
+  [3,3.5,4,4.5,5].forEach(v=>{const p=Q.map((_,k)=>pt(k,v).join(",")).join(" ");h+=`<polygon points="${p}" fill="none" stroke="${css("--line")}" stroke-width="1"/>`;
+    h+=`<text x="${cx+4}" y="${cy-(v-lo)/(hi-lo)*R-3}" font-size="13">${AR(v)}</text>`});
+  Q.forEach((_,k)=>{const [x,y]=pt(k,5);h+=`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${css("--line")}"/>`;
+    const lx=cx+(R+20)*Math.cos(ang(k)), ly=cy+(R+20)*Math.sin(ang(k));
+    h+=`<text x="${lx}" y="${ly+5}" text-anchor="middle" font-size="18" style="font-family:var(--f-display);font-weight:700;fill:${st.mode===k?css("--ink"):css("--gold")}">${AR(k+1)}</text>`});
+  if(st.grade!=="all"){h+=`<polygon points="${all.map(s=>pt(s.k,s.m).join(",")).join(" ")}" fill="none" stroke="${css("--muted")}" stroke-dasharray="4 4" stroke-width="1.5"/>`}
+  h+=`<polygon points="${cur.map(s=>pt(s.k,s.m).join(",")).join(" ")}" fill="${css("--teal")}" fill-opacity=".22" stroke="${css("--teal")}" stroke-width="2.2" stroke-linejoin="round"/>`;
+  cur.forEach(s=>{const [x,y]=pt(s.k,s.m);h+=`<circle class="rv" data-k="${s.k}" cx="${x}" cy="${y}" r="${st.mode===s.k?6:4.5}" fill="${st.mode===s.k?css("--gold"):css("--teal")}" stroke="${css("--surface")}" stroke-width="2" style="cursor:pointer"/>`});
+  if(st.grade!=="all") h+=`<g transform="translate(10,330)"><line x1="0" y1="-4" x2="18" y2="-4" stroke="${css("--muted")}" stroke-dasharray="4 4"/><text x="24" y="0" font-size="14">جميع الصفوف</text></g>`;
+  svg.innerHTML=h;
+  svg.querySelectorAll(".rv").forEach(c=>{const k=+c.dataset.k;
+    c.onmousemove=e=>showTip(e,`<b>${AR(k+1)}. ${Q[k][0]}</b><br>المتوسط ${f1(cur[k].m)}${st.grade!=="all"?` · الكل ${f1(all[k].m)}`:""}`);
+    c.onmouseleave=hideTip; c.onclick=()=>{st.mode=st.mode===k?"mean":k;render()}});
+  document.getElementById("radarKeys").innerHTML=Q.map((q,k)=>`<span><b>${AR(k+1)}</b>${q[0]}</span>`).join("");
+}
+
+/* Statistical table */
+const degree=m=>m>=4.21?"مرتفعة جداً":m>=3.41?"مرتفعة":m>=2.61?"متوسطة":m>=1.81?"منخفضة":"منخفضة جداً";
+const sd=v=>{if(v.length<2)return 0;const m=mean(v);return Math.sqrt(v.reduce((a,x)=>a+(x-m)**2,0)/(v.length-1))};
+function renderStats(){
+  const R=rows(), S=qStats(R).map(s=>({...s,sd:sd(R.map(r=>r.a[s.k]))}));
+  const order=[...S].sort((a,b)=>b.m-a.m); S.forEach(s=>s.rank=1+order.findIndex(o=>o.m.toFixed(4)===s.m.toFixed(4)));
+  const all=R.flatMap(r=>r.a), M=mean(all), N=R.length||1;
+  const lv=[5,4,3,2,1];
+  document.getElementById("stats").innerHTML=`<thead>
+    <tr><th rowspan="2">م</th><th rowspan="2">العبارة</th>${lv.map(v=>`<th colspan="2" class="c">${LBL[v]}</th>`).join("")}<th rowspan="2" class="c">المتوسط الحسابي</th><th rowspan="2" class="c">الانحراف المعياري</th><th rowspan="2" class="c">الوزن النسبي</th><th rowspan="2" class="c">درجة الموافقة</th><th rowspan="2" class="c">الترتيب</th></tr>
+    <tr>${lv.map(()=>`<th class="c sm">ت</th><th class="c sm">%</th>`).join("")}</tr></thead>
+    <tbody>${S.map(s=>`<tr class="${st.mode===s.k?"sel":""}"><td class="c num">${s.k+1}</td><td class="qtxt" title="${Q[s.k][1]}">${Q[s.k][0]}</td>
+      ${lv.map(v=>`<td class="c num">${s.c[v]}</td><td class="c num muted">${(s.c[v]/N*100).toFixed(1)}</td>`).join("")}
+      <td class="c num b">${s.m.toFixed(2)}</td><td class="c num">${s.sd.toFixed(2)}</td><td class="c num">${(s.m/5*100).toFixed(1)}%</td><td class="c"><span class="deg">${degree(s.m)}</span></td><td class="c num b">${s.rank}</td></tr>`).join("")}</tbody>
+    <tfoot><tr><td colspan="12" class="b">المتوسط العام للاستبيان</td><td class="c num b">${M.toFixed(2)}</td><td class="c num b">${sd(all).toFixed(2)}</td><td class="c num b">${(M/5*100).toFixed(1)}%</td><td class="c"><span class="deg">${degree(M)}</span></td><td class="c">—</td></tr></tfoot>`;
+}
+
+/* Grades */
+function renderGrades(){
+  const el=document.getElementById("grades");
+  const gs=[1,2,3,0].map(g=>{const R=ALL.filter(r=>r.g===g);return {g,n:R.length,m:mean(R.flatMap(r=>r.a))}});
+  el.innerHTML=gs.map(o=>`<button class="grow" data-g="${o.g}" aria-pressed="${st.grade===o.g}">
+     <span>${GR[o.g]}<br><span class="k num">${AR(o.n)} استجابة</span></span>
+     <span class="track"><span class="fill" style="width:${((o.m-3)/2*100).toFixed(1)}%"></span></span>
+     <span class="v num">${f1(o.m)}</span></button>`).join("")+`<p class="foot" style="text-align:start;margin:0">طول الشريط من 3 إلى 5</p>`;
+  el.querySelectorAll(".grow").forEach(b=>b.onclick=()=>{const g=+b.dataset.g;st.grade=st.grade===g?"all":g;st.sel=null;render()});
+}
+
+/* Timeline */
+function renderTimeline(){
+  const svg=document.getElementById("timeline");
+  const W=440,H=190,pl=28,pr=12,pt=14,pb=28;
+  const start=17*60, nb=14, bw=(W-pl-pr)/nb;
+  const R=rows(), b=new Array(nb).fill(0);
+  R.forEach(r=>{const [hh,mm]=r.t.split(":").map(Number);const k=Math.min(nb-1,Math.max(0,Math.floor((hh*60+mm-start)/30)));b[k]++});
+  const mx=Math.max(4,...b), y=v=>H-pb-(v/mx)*(H-pt-pb);
+  let cum=0; const cpts=b.map((v,k)=>{cum+=v;return [pl+bw*(k+1),H-pb-(cum/Math.max(1,R.length))*(H-pt-pb)]});
+  let h="";
+  [0,Math.ceil(mx/2),mx].forEach(v=>{h+=`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="${css("--line")}"/><text x="${pl-6}" y="${y(v)+4}" text-anchor="end" font-size="13">${AR(v)}</text>`});
+  b.forEach((v,k)=>{if(v) h+=`<rect class="tb" data-k="${k}" x="${pl+k*bw+3}" y="${y(v)}" width="${bw-6}" height="${H-pb-y(v)}" rx="3" fill="${css("--teal")}"/>`;
+    if(k%2===0) h+=`<text x="${pl+k*bw+bw/2}" y="${H-10}" text-anchor="middle" font-size="13">${AR(((17+k/2-1)%12)+1)}${k/2+17>=12?"م":"ص"}</text>`});
+  h+=`<polyline points="${pl},${H-pb} ${cpts.map(p=>p.join(",")).join(" ")}" fill="none" stroke="${css("--gold")}" stroke-width="2" stroke-linejoin="round"/>`;
+  const last=cpts[cpts.length-1]; h+=`<circle cx="${last[0]}" cy="${last[1]}" r="4" fill="${css("--gold")}"/>`;
+  svg.innerHTML=h;
+  svg.querySelectorAll(".tb").forEach(rc=>{const k=+rc.dataset.k;const m0=start+k*30;const fm=m=>AR(String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"));
+    rc.onmousemove=e=>showTip(e,`${fm(m0)} – ${fm(m0+30)}<br><b>${AR(b[k])}</b> استجابة`);rc.onmouseleave=hideTip});
+  const peak=b.indexOf(Math.max(...b));
+  document.getElementById("tlSub").innerHTML=`<span style="color:var(--gold)">━</span> المنحنى التراكمي · الذروة ${AR(17+Math.floor(peak/2))}:${peak%2?"30":"00"}`;
+}
+
+/* Insights */
+function renderInsights(){
+  const R=rows(); if(!R.length){document.getElementById("insights").innerHTML="";return}
+  const S=qStats(R); const hi=[...S].sort((a,b)=>b.m-a.m)[0], lo=[...S].sort((a,b)=>a.m-b.m)[0];
+  const strong=R.flatMap(r=>r.a).filter(v=>v===5).length/(R.length*8);
+  const res=[]; R.forEach(r=>r.a.forEach((v,k)=>{if(v<=3)res.push({r,k,v})}));
+  const resQ={}; res.forEach(x=>resQ[x.k]=(resQ[x.k]||0)+1);
+  const topRes=Object.entries(resQ).sort((a,b)=>b[1]-a[1]);
+  const items=[
+    [css("--teal"),`حصلت عبارة <strong>${Q[hi.k][0]}</strong> على أعلى متوسط (${f1(hi.m)})، بنسبة موافقة بلغت ${pct((hi.c[4]+hi.c[5])/hi.n)}.`],
+    [css("--gold"),`سجّلت عبارة <strong>${Q[lo.k][0]}</strong> أدنى متوسط نسبياً (${f1(lo.m)})، ويُوصى بتعزيزها في الخطة القادمة.`],
+    [css("--teal2"),`بلغت نسبة استجابات «أوافق بشدة» <strong>${pct(strong)}</strong> من إجمالي الاستجابات، مما يدل على مستوى رضا مرتفع ومتسق.`],
+    [res.length?css("--rose"):css("--teal"), res.length?`بلغ عدد استجابات التحفظ <strong>${AR(res.length)}</strong> استجابات، تركّز أغلبها في: ${topRes.slice(0,2).map(([k,c])=>`«${Q[k][0]}» (${AR(c)})`).join(" و")}.`:`لم تُسجَّل أي استجابة تحفظ في هذه الفئة.`]
+  ];
+  document.getElementById("insights").innerHTML=items.map(([c,t])=>`<div class="in"><span class="dot" style="background:${c}"></span><p>${t}</p></div>`).join("");
+}
+
+/* Table */
+function renderTable(){
+  let R=rows().filter(r=>!st.q||nameOf(r).includes(st.q));
+  const key={t:r=>r.t,m:r=>r.mean,g:r=>r.g}[st.sort];
+  R=[...R].sort((a,b)=>(key(a)>key(b)?1:key(a)<key(b)?-1:a.i-b.i)*st.dir);
+  const ar=k=>st.sort===k?(st.dir>0?" ▲":" ▼"):"";
+  document.getElementById("tbl").innerHTML=`<thead><tr><th>#</th><th>الاستجابة</th><th class="sortable" data-s="g">الصف${ar("g")}</th><th class="sortable" data-s="t">الوقت${ar("t")}</th>${Q.map((q,k)=>`<th class="q" title="${q[1]}">${AR(k+1)}</th>`).join("")}<th class="sortable" data-s="m">المتوسط${ar("m")}</th></tr></thead>
+  <tbody>${R.map(r=>`<tr data-i="${r.i}" class="${st.sel===r.i?"sel":""}"><td class="muted num">${AR(r.i+1)}</td><td>${nameOf(r)}</td><td class="muted">${GR[r.g]}</td><td class="muted num">${AR(r.t)}</td>
+    ${r.a.map((v,k)=>`<td class="cell"><i class="s${v}" title="${AR(k+1)}: ${LBL[v]}"></i></td>`).join("")}<td class="m num">${f1(r.mean)}</td></tr>`).join("")||`<tr><td colspan="13" class="muted" style="text-align:center;padding:20px">لا توجد نتائج مطابقة للبحث.</td></tr>`}</tbody>`;
+  document.querySelectorAll("#tbl th.sortable").forEach(th=>th.onclick=()=>{const s=th.dataset.s;if(st.sort===s)st.dir*=-1;else{st.sort=s;st.dir=s==="m"?-1:1}renderTable()});
+  document.querySelectorAll("#tbl tbody tr[data-i]").forEach(tr=>tr.onclick=()=>{const i=+tr.dataset.i;st.sel=st.sel===i?null:i;renderTable()});
+}
+
+function render(){renderSeg();renderKPIs();renderLikert();renderRadar();renderStats();renderGrades();renderTimeline();renderInsights();renderTable()}
+
+document.getElementById("search").oninput=e=>{st.q=e.target.value.trim();renderTable()};
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",render);
+new MutationObserver(render).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+render();
+</script>
+
+</body>
+</html>
