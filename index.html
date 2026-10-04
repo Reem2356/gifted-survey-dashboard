@@ -51,7 +51,8 @@ header{display:grid;grid-template-columns:1fr;gap:16px 24px;align-items:end;bord
 h1{font-size:clamp(24px,3.2vw,38px);line-height:1.3;margin-top:8px;font-weight:700;text-align:center}
 h1 span{color:var(--teal)}
 .eyebrow{font-size:15px}
-.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:flex-start}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center}
+.scope{font-family:var(--f-display);font-weight:700;font-size:19px;color:var(--teal);padding:2px 18px;border:1px solid var(--teal);border-radius:6px}
 .seg{display:flex;background:var(--sunk);border:1px solid var(--line);border-radius:6px;padding:3px;gap:2px;flex-wrap:wrap}
 .seg button{border:0;background:transparent;padding:4px 14px;border-radius:4px;cursor:pointer;font-size:17px;color:var(--muted);white-space:nowrap}
 .seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:600}
@@ -119,7 +120,7 @@ h1 span{color:var(--teal)}
 
 /* grades */
 .grades{display:flex;flex-direction:column;gap:10px}
-.grow{display:grid;grid-template-columns:120px 1fr 54px;gap:10px;align-items:center;font-size:17px;cursor:pointer;background:none;border:0;padding:4px 0;text-align:start;width:100%}
+.grow{display:grid;grid-template-columns:120px 1fr 54px;gap:10px;align-items:center;font-size:17px;cursor:default;background:none;border:0;padding:4px 0;text-align:start;width:100%}
 .grow .track{height:14px;background:var(--sunk);border-radius:3px;overflow:hidden;position:relative}
 .grow .fill{position:absolute;inset-block:0;inset-inline-start:0;background:var(--teal);border-radius:3px;transition:width .5s}
 .grow[aria-pressed="true"] .fill{background:var(--gold)}
@@ -179,7 +180,7 @@ td.m{font-family:var(--f-display);font-weight:600}
       <div class="eyebrow" style="justify-content:center"><span>تاريخ التطبيق:</span><b id="hdate">3 أكتوبر 2026</b></div>
     </div>
     <div class="controls">
-      <span class="toggle" style="cursor:default">تصفية حسب الصف:</span><div class="seg" id="gradeSeg" role="group" aria-label="تصفية حسب الصف"></div>
+      <span class="scope">جميع صفوف الموهبة</span>
       
     </div>
   </header>
@@ -214,7 +215,7 @@ td.m{font-family:var(--f-display);font-weight:600}
 
   <div class="grid g-flower">
       <section class="panel">
-        <div class="ph"><h2>المقارنة بين الصفوف الدراسية</h2><p>حدد الصف للتصفية</p></div>
+        <div class="ph"><h2>المقارنة بين الصفوف الدراسية</h2></div>
         <div class="grades" id="grades"></div>
       </section>
       <section class="panel">
@@ -374,7 +375,7 @@ function renderGrades(){
      <span>${GR[o.g]}<br><span class="k num">${AR(o.n)} استجابة</span></span>
      <span class="track"><span class="fill" style="width:${((o.m-3)/2*100).toFixed(1)}%"></span></span>
      <span class="v num">${f1(o.m)}</span></button>`).join("")+`<p class="foot" style="text-align:start;margin:0">طول الشريط من 3 إلى 5</p>`;
-  el.querySelectorAll(".grow").forEach(b=>b.onclick=()=>{const g=+b.dataset.g;st.grade=st.grade===g?"all":g;st.sel=null;render()});
+  
 }
 
 /* Timeline */
@@ -429,7 +430,7 @@ function renderTable(){
   document.querySelectorAll("#tbl tbody tr[data-i]").forEach(tr=>tr.onclick=()=>{const i=+tr.dataset.i;st.sel=st.sel===i?null:i;renderTable()});
 }
 
-function render(){renderSeg();renderKPIs();renderLikert();renderRadar();renderStats();renderGrades();renderTimeline();renderInsights();renderTable()}
+function render(){renderKPIs();renderLikert();renderRadar();renderStats();renderGrades();renderTimeline();renderInsights();renderTable()}
 
 document.getElementById("search").oninput=e=>{st.q=e.target.value.trim();renderTable()};
 matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",render);
