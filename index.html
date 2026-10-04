@@ -162,6 +162,32 @@ td.m{font-family:var(--f-display);font-weight:600}
 .stats tfoot td{background:var(--sunk)}
 .stats tr.sel td{background:var(--gold-soft)}
 .deg{display:inline-block;padding:0 10px;border-radius:4px;background:var(--teal);color:#fff;font-size:15px;white-space:nowrap}
+.stats-cards{display:none}
+.sc{border:1px solid var(--line);border-radius:6px;padding:12px;display:flex;flex-direction:column;gap:10px}
+.sc.sel{background:var(--gold-soft)}
+.sc.total{background:var(--sunk)}
+.sc-h{display:flex;gap:8px;align-items:flex-start;line-height:1.45}
+.sc-h .n{color:var(--gold);font-family:var(--f-display);font-weight:700}
+.sc-m{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.sc-m b{display:block;font-family:var(--f-display);font-size:20px}
+.sc-m small{color:var(--muted);font-size:13px}
+.sc-f{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px}
+.sc-f i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-inline-end:4px}
+@media (max-width:700px){
+  .stats-wrap{display:none}.stats-cards{display:grid;gap:10px}
+  .letterhead{flex-direction:column;align-items:center;text-align:center}
+  .wrap{padding-inline:14px;gap:16px}
+  .panel{padding:16px 14px}
+  #timeline text{font-size:17px}
+  #tbl{min-width:0}
+  #tbl th:nth-child(1),#tbl td:nth-child(1),#tbl th:nth-child(3),#tbl td:nth-child(3),#tbl th:nth-child(4),#tbl td:nth-child(4){display:none}
+  #tbl th,#tbl td{padding:5px 2px}
+  #tbl td.cell i{width:13px;height:13px;border-radius:3px}
+  #tbl td:nth-child(2){font-size:14px;line-height:1.35}
+  .tools input{width:100%}
+  .ph .tools{width:100%}
+  .kpi .val{font-size:30px}
+}
 #tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--bg);font-size:15px;font-family:var(--f-body);padding:7px 10px;border-radius:8px;opacity:0;transition:opacity .12s;z-index:20;max-width:260px;line-height:1.5}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
@@ -209,7 +235,8 @@ td.m{font-family:var(--f-display);font-weight:600}
 
   <section class="panel">
     <div class="ph"><h2>الجدول الإحصائي لعبارات الاستبيان</h2><p>التكرارات والنسب المئوية والمتوسطات الحسابية والانحرافات المعيارية</p></div>
-    <div class="tscroll"><table id="stats" class="stats"></table></div>
+    <div class="tscroll stats-wrap"><table id="stats" class="stats"></table></div>
+    <div class="stats-cards" id="statsCards"></div>
     <p class="foot" style="text-align:start;margin:10px 0 0">درجة الموافقة: 1.00–1.80 منخفضة جداً · 1.81–2.60 منخفضة · 2.61–3.40 متوسطة · 3.41–4.20 مرتفعة · 4.21–5.00 مرتفعة جداً</p>
   </section>
 
@@ -225,7 +252,7 @@ td.m{font-family:var(--f-display);font-weight:600}
   </div>
 
   <section class="panel">
-    <div class="ph"><h2>أبرز النتائج</h2><p>تُحدَّث وفق التصفية المختارة</p></div>
+    <div class="ph"><h2>أبرز النتائج</h2></div>
     <div class="ins" id="insights"></div>
   </section>
 
@@ -365,6 +392,12 @@ function renderStats(){
       ${lv.map(v=>`<td class="c num">${s.c[v]}</td><td class="c num muted">${(s.c[v]/N*100).toFixed(1)}</td>`).join("")}
       <td class="c num b">${s.m.toFixed(2)}</td><td class="c num">${s.sd.toFixed(2)}</td><td class="c num">${(s.m/5*100).toFixed(1)}%</td><td class="c"><span class="deg">${degree(s.m)}</span></td><td class="c num b">${s.rank}</td></tr>`).join("")}</tbody>
     <tfoot><tr><td colspan="12" class="b">المتوسط العام للاستبيان</td><td class="c num b">${M.toFixed(2)}</td><td class="c num b">${sd(all).toFixed(2)}</td><td class="c num b">${(M/5*100).toFixed(1)}%</td><td class="c"><span class="deg">${degree(M)}</span></td><td class="c">—</td></tr></tfoot>`;
+  document.getElementById("statsCards").innerHTML=S.map(s=>`<div class="sc ${st.mode===s.k?"sel":""}">
+    <div class="sc-h"><span class="n">${s.k+1}</span><span class="sc-q">${Q[s.k][1]}</span></div>
+    <div class="sc-m"><div><b class="num">${s.m.toFixed(2)}</b><small>المتوسط</small></div><div><b class="num">${s.sd.toFixed(2)}</b><small>الانحراف</small></div><div><b class="num">${(s.m/5*100).toFixed(1)}%</b><small>الوزن النسبي</small></div><div><b class="num">${s.rank}</b><small>الترتيب</small></div></div>
+    <div class="sc-f">${lv.map(v=>`<span><i class="s${v}"></i>${LBL[v]}: <b class="num">${s.c[v]}</b> <span class="muted num">(${(s.c[v]/N*100).toFixed(1)}%)</span></span>`).join("")}</div>
+    <div><span class="deg">${degree(s.m)}</span></div></div>`).join("")+
+    `<div class="sc total"><div class="sc-h"><span class="sc-q b">المتوسط العام للاستبيان</span></div><div class="sc-m"><div><b class="num">${M.toFixed(2)}</b><small>المتوسط</small></div><div><b class="num">${sd(all).toFixed(2)}</b><small>الانحراف</small></div><div><b class="num">${(M/5*100).toFixed(1)}%</b><small>الوزن النسبي</small></div><div><span class="deg">${degree(M)}</span></div></div></div>`;
 }
 
 /* Grades */
